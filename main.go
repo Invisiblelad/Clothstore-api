@@ -24,6 +24,7 @@ func Routes() http.Handler {
     r.Post("/products/many", controllers.BulkInsertProduct) //Create Multiple Products
     r.Delete("/delete/products", controllers.DeleteProducts) // Delete Multiple Products
     r.Get("/products/category/{category}", controllers.CategoryOfProducts) // Gets Products by Category
+    r.Put("/products/{id}/replace", controllers.ReplaceProduct)  // Replaces a product
 
     // Swagger documentation route
     r.Get("/swagger/*", httpSwagger.WrapHandler)

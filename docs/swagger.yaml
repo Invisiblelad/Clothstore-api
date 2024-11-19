@@ -203,6 +203,46 @@ paths:
       summary: Update a product
       tags:
       - products
+  /products/{id}/replace:
+    put:
+      consumes:
+      - application/json
+      description: Replace the details of an existing product with the provided new
+        details
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product Data
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product replaced successfully
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Invalid Product ID or Request Body
+          schema:
+            type: string
+        "404":
+          description: Product Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Replace a product
+      tags:
+      - products
   /products/bulk:
     post:
       consumes:

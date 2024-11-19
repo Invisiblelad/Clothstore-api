@@ -314,6 +314,53 @@ func CategoryOfProducts(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(products)
 }
 
+// ReplaceProduct replaces an existing product in the database
+// @Summary Replace a product
+// @Description Replace the details of an existing product with the provided new details
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param id path string true "Product ID"
+// @Param product body models.Product true "Product Data"
+// @Success 200 {object} models.Product "Product replaced successfully"
+// @Failure 400 {string} string "Invalid Product ID or Request Body"
+// @Failure 404 {string} string "Product Not Found"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /products/{id}/replace [put]
+func ReplaceProduct(w http.ResponseWriter, r *http.Request) {
+    id := chi.URLParam(r, "id")
+    objectID, err := primitive.ObjectIDFromHex(id)
+    if err != nil {
+        http.Error(w, "Invalid product ID", http.StatusBadRequest)
+        return
+    }
+
+    var product models.Product
+    err = json.NewDecoder(r.Body).Decode(&product)
+    if err != nil {
+        http.Error(w, "Error parsing request body", http.StatusBadRequest)
+        return
+    }
+
+    result, err := productCollection.ReplaceOne(
+        context.Background(),
+        bson.M{"_id": objectID}, 
+        product,                 
+    )
+    if err != nil {
+        http.Error(w, "Failed to replace product", http.StatusInternalServerError)
+        return
+    }
+
+    if result.MatchedCount == 0 {
+        http.Error(w, "Product not found", http.StatusNotFound)
+        return
+    }
+
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(product)
+}
+
 
 
 
